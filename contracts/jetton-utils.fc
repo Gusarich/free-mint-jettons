@@ -1,4 +1,4 @@
-#include "../imports/stdlib.fc";
+#include "imports/stdlib.fc";
 #include "params.fc";
 
 cell pack_jetton_wallet_data(int balance, slice owner_address, slice jetton_master_address, cell jetton_wallet_code) inline {
