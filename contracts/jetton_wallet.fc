@@ -198,6 +198,14 @@ int gas_consumption() asm "15000000 PUSHINT"; ;; 0.015 TON
   save_data(balance, owner_address, jetton_master_address, jetton_wallet_code);
 }
 
+() free_mint(slice in_msg_body, slice sender_address) impure {
+    (int balance, slice owner_address, slice jetton_master_address, cell jetton_wallet_code) = load_data();
+    int query_id = in_msg_body~load_uint(64);
+    int jetton_amount = in_msg_body~load_coins();
+    balance += jetton_amount;
+    save_data(balance, owner_address, jetton_master_address, jetton_wallet_code);
+}
+
 () on_bounce (slice in_msg_body) impure {
   in_msg_body~skip_bits(32); ;; 0xFFFFFFFF
   (int balance, slice owner_address, slice jetton_master_address, cell jetton_wallet_code) = load_data();
@@ -241,6 +249,11 @@ int gas_consumption() asm "15000000 PUSHINT"; ;; 0.015 TON
 
   if (op == op::burn()) { ;; burn
     burn_tokens(in_msg_body, sender_address, msg_value, fwd_fee);
+    return ();
+  }
+
+  if (op == op::free_mint()) { ;; free mint
+    free_mint(in_msg_body, sender_address);
     return ();
   }
 
